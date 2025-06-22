@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦉 Noctua - Report Detail</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-gray-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center text-white hover:text-gray-300 transition-colors">
+                        <i class="fas fa-arrow-left mr-3"></i>
+                        <i class="fas fa-owl text-2xl mr-3"></i>
+                        <h1 class="text-xl font-bold">Noctua OSINT Dashboard</h1>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Report Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-3">
+                    <span class="px-3 py-1 text-sm font-medium rounded-full 
+                        {% if report.urgency == 'high' %}bg-red-100 text-red-800
+                        {% elif report.urgency == 'medium' %}bg-yellow-100 text-yellow-800
+                        {% else %}bg-green-100 text-green-800{% endif %}">
+                        {{ report.urgency|title }} Urgency
+                    </span>
+                    <span class="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded-full">
+                        {{ report.topic }}
+                    </span>
+                    <span class="px-3 py-1 text-sm font-medium bg-purple-100 text-purple-800 rounded-full">
+                        {{ report.region }}
+                    </span>
+                </div>
+                <div class="text-sm text-gray-500">
+                    <i class="fas fa-calendar mr-1"></i>
+                    {{ report.analyzed_at[:19] }}
+                </div>
+            </div>
+            
+            <h1 class="text-2xl font-bold text-gray-900 mb-4">{{ report.original_article.title }}</h1>
+            
+            <div class="flex items-center text-sm text-gray-600 space-x-4 mb-4">
+                <span><i class="fas fa-link mr-1"></i>Source: {{ report.original_article.source }}</span>
+                <span><i class="fas fa-chart-line mr-1"></i>Confidence: {{ report.confidence|title }}</span>
+                <span><i class="fas fa-clock mr-1"></i>Published: {{ report.original_article.published[:10] if report.original_article.published else 'Unknown' }}</span>
+            </div>
+        </div>
+
+        <!-- Analysis Summary -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-brain mr-2 text-blue-600"></i>AI Analysis Summary
+            </h2>
+            <p class="ai-summary leading-relaxed">{{ report.summary }}</p>
+        </div>
+
+        <!-- Intelligence Metrics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full 
+                        {% if report.urgency == 'high' %}bg-red-100 text-red-600
+                        {% elif report.urgency == 'medium' %}bg-yellow-100 text-yellow-600
+                        {% else %}bg-green-100 text-green-600{% endif %}">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Urgency Level</p>
+                        <p class="text-xl font-bold text-gray-900">{{ report.urgency|title }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-tag text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Topic Category</p>
+                        <p class="text-xl font-bold text-gray-900">{{ report.topic }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <i class="fas fa-globe text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Geographic Region</p>
+                        <p class="text-xl font-bold text-gray-900">{{ report.region }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Original Article Details -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-newspaper mr-2 text-green-600"></i>Original Article
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Title</h3>
+                    <p class="text-gray-900">{{ report.original_article.title }}</p>
+                </div>
+                
+                {% if report.original_article.description %}
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Description</h3>
+                    <p class="text-gray-700">{{ report.original_article.description }}</p>
+                </div>
+                {% endif %}
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Source URL</h3>
+                    <a href="{{ report.original_article.link }}" target="_blank" 
+                       class="text-blue-600 hover:text-blue-800 break-all">
+                        {{ report.original_article.link }}
+                        <i class="fas fa-external-link-alt ml-1"></i>
+                    </a>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Feed Source</h3>
+                    <p class="text-gray-900">{{ report.original_article.source }}</p>
+                </div>
+                
+                {% if report.original_article.published %}
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Publication Date</h3>
+                    <p class="text-gray-900">{{ report.original_article.published }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">
+                <i class="fas fa-cog mr-2 text-gray-600"></i>Technical Details
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Report ID</h3>
+                    <p class="text-gray-900 font-mono text-sm">{{ report.id }}</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">Analysis Timestamp</h3>
+                    <p class="text-gray-900">{{ report.analyzed_at }}</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600">AI Confidence</h3>
+                    <div class="flex items-center">
+                        <div class="w-full bg-gray-200 rounded-full h-2 mr-2">
+                            <div class="h-2 rounded-full 
+                                {% if report.confidence == 'high' %}bg-green-600
+                                {% elif report.confidence == 'medium' %}bg-yellow-600
+                                {% else %}bg-red-600{% endif %}"
+                                 style="width: 
+                                    {% if report.confidence == 'high' %}100%
+                                    {% elif report.confidence == 'medium' %}66%
+                                    {% else %}33%{% endif %}">
+                            </div>
+                        </div>
+                        <span class="text-sm font-medium text-gray-600">{{ report.confidence|title }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center space-x-4 mt-8">
+            <a href="/" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+            </a>
+            <a href="{{ report.original_article.link }}" target="_blank" 
+               class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors">
+                <i class="fas fa-external-link-alt mr-2"></i>View Original
+            </a>
+        </div>
+    </div>
+</body>
+</html> 

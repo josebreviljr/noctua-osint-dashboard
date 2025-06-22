@@ -1,0 +1,333 @@
+/* Noctua Dashboard Custom Styles */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Loading animations */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Card hover effects */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Status indicators */
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-high {
+    background-color: #ef4444;
+}
+
+.status-medium {
+    background-color: #f59e0b;
+}
+
+.status-low {
+    background-color: #10b981;
+}
+
+/* Modal animations */
+.modal-enter {
+    animation: modalEnter 0.3s ease-out;
+}
+
+@keyframes modalEnter {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Chart containers - FIXED HEIGHT */
+.chart-container {
+    position: relative;
+    height: 300px !important;
+    width: 100%;
+    max-height: 300px !important;
+    overflow: hidden;
+}
+
+/* Chart canvas constraints */
+canvas {
+    max-height: 300px !important;
+    height: 300px !important;
+}
+
+/* Chart wrapper */
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Prevent chart expansion */
+.chart-wrapper canvas {
+    max-height: 280px !important;
+    height: 280px !important;
+    width: auto !important;
+    max-width: 100% !important;
+}
+
+/* Chart.js container fixes */
+.chartjs-render-monitor {
+    height: 280px !important;
+    max-height: 280px !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px !important;
+        max-height: 250px !important;
+    }
+    
+    canvas {
+        max-height: 250px !important;
+        height: 250px !important;
+    }
+    
+    .chart-wrapper {
+        height: 250px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .chart-container {
+        height: 200px !important;
+        max-height: 200px !important;
+    }
+    
+    canvas {
+        max-height: 200px !important;
+        height: 200px !important;
+    }
+    
+    .chart-wrapper {
+        height: 200px;
+    }
+}
+
+/* Custom button styles */
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+}
+
+/* Filter styles */
+.filter-select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+}
+
+/* Notification styles */
+.notification {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Report card styles */
+.report-card {
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.report-card:hover {
+    border-left-color: #3b82f6;
+    background-color: #f8fafc;
+}
+
+.report-card.high-urgency {
+    border-left-color: #ef4444;
+}
+
+.report-card.medium-urgency {
+    border-left-color: #f59e0b;
+}
+
+.report-card.low-urgency {
+    border-left-color: #10b981;
+}
+
+/* Tag styles */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.tag:hover {
+    transform: scale(1.05);
+}
+
+/* Progress bar for collection */
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #e5e7eb;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transition: width 0.3s ease;
+}
+
+/* Source link styles */
+.source-link {
+    color: #3b82f6;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.source-link:hover {
+    color: #1d4ed8;
+    background-color: #eff6ff;
+    text-decoration: none;
+}
+
+.source-link .external-icon {
+    font-size: 0.75rem;
+    margin-left: 4px;
+    opacity: 0.7;
+}
+
+.source-link:hover .external-icon {
+    opacity: 1;
+}
+
+/* New style for AI Analysis Summary */
+.ai-summary {
+    color: #94a3b8; /* Default dark text for light mode */
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .bg-gray-50 {
+        background-color: #1f2937;
+    }
+    
+    .bg-white {
+        background-color: #374151;
+    }
+    
+    .text-gray-900 {
+        color: #f9fafb;
+    }
+    
+    .text-gray-600, .ai-summary {
+        color: #94a3b8; /* Custom gray color for dark mode */
+    }
+    
+    .border-gray-200 {
+        border-color: #4b5563;
+    }
+    
+    .hover\:bg-gray-50:hover {
+        background-color: #4b5563;
+    }
+    
+    .source-link:hover {
+        background-color: #1e3a8a;
+    }
+}
+
+/* AI Analysis Summary Text - Make it white */
+.text-gray-600 {
+    color: #ffffff !important;
+}
+
+/* Alternative: If you want a light gray instead of pure white */
+/* .text-gray-600 {
+    color: #e5e7eb !important;
+} */ 

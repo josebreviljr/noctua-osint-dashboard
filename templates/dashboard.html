@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦉 Noctua OSINT Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-gray-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-owl text-2xl mr-3"></i>
+                    <h1 class="text-xl font-bold">Noctua OSINT Dashboard</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="collectBtn" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-sync-alt mr-2"></i>Collect Data
+                    </button>
+                    <button id="exportBtn" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors">
+                        <i class="fas fa-download mr-2"></i>Export CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                        <i class="fas fa-file-alt text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Total Reports</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.total_reports }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-green-100 text-green-600">
+                        <i class="fas fa-clock text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Recent (24h)</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.recent_reports }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-red-100 text-red-600">
+                        <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">High Urgency</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.summary.urgency_distribution.high if data.summary.urgency_distribution else 0 }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center">
+                    <div class="p-3 rounded-full bg-purple-100 text-purple-600">
+                        <i class="fas fa-globe text-2xl"></i>
+                    </div>
+                    <div class="ml-4">
+                        <p class="text-sm font-medium text-gray-600">Sources</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ data.sources|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Urgency Distribution Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Urgency Distribution</h3>
+                <div class="chart-wrapper">
+                    <canvas id="urgencyChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+            
+            <!-- Topics Chart -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Topics</h3>
+                <div class="chart-wrapper">
+                    <canvas id="topicsChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters and Reports -->
+        <div class="bg-white rounded-lg shadow-md">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">Recent Reports</h3>
+                    <div class="flex flex-wrap gap-2 mt-2 sm:mt-0">
+                        <select id="urgencyFilter" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                            <option value="">All Urgency</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                        <select id="topicFilter" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                            <option value="">All Topics</option>
+                        </select>
+                        <select id="regionFilter" class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                            <option value="">All Regions</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="reportsContainer" class="divide-y divide-gray-200">
+                {% for report in data.reports %}
+                <div class="p-6 hover:bg-gray-50 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full 
+                                    {% if report.urgency == 'high' %}bg-red-100 text-red-800
+                                    {% elif report.urgency == 'medium' %}bg-yellow-100 text-yellow-800
+                                    {% else %}bg-green-100 text-green-800{% endif %}">
+                                    {{ report.urgency|title }}
+                                </span>
+                                <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                    {{ report.topic }}
+                                </span>
+                                <span class="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-800 rounded-full">
+                                    {{ report.region }}
+                                </span>
+                            </div>
+                            <h4 class="text-lg font-medium text-gray-900 mb-2">
+                                {{ report.original_article.title }}
+                            </h4>
+                            <p class="ai-summary mb-3">{{ report.summary }}</p>
+                            <div class="flex items-center text-sm text-gray-500 space-x-4">
+                                <span><i class="fas fa-calendar mr-1"></i>{{ report.analyzed_at[:10] }}</span>
+                                <a href="{{ report.original_article.link }}" target="_blank" class="source-link">
+                                    <i class="fas fa-link mr-1"></i>{{ report.original_article.source|truncate(30) }}
+                                    <i class="fas fa-external-link-alt external-icon"></i>
+                                </a>
+                                <span><i class="fas fa-chart-line mr-1"></i>Confidence: {{ report.confidence|title }}</span>
+                            </div>
+                        </div>
+                        <div class="ml-4">
+                            <a href="/report/{{ report.id }}" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html> 

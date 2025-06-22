@@ -1,0 +1,5 @@
+https://feeds.bbci.co.uk/news/world/rss.xml
+https://www.theguardian.com/world/rss
+https://feeds.npr.org/1004/rss.xml
+https://feeds.feedburner.com/techcrunch
+https://news.google.com/rss
